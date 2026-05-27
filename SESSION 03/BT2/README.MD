@@ -1,0 +1,1 @@
+if working_days == 0: và in ra cảnh báo > Lỗi logic 
