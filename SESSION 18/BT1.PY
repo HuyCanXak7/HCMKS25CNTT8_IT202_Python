@@ -1,67 +1,53 @@
-def show_orders(orders):
-    print("\n--- DANH SÁCH ĐƠN HÀNG ĐẠI LÝ ---")
-
-    if len(orders) == 0:
-        print("Danh sách đơn hàng đang rỗng!")
+    def display_orders(orders):
+    if not orders:
+        print("\nERR-02: Danh sách đơn hàng trống!")
         return
 
-    print(f"{'MÃ ĐƠN':<8} | {'TÊN ĐẠI LÝ':<20} | {'GIÁ TRỊ (VND)':<15} | {'TRẠNG THÁI'}")
-    print("-" * 70)
+    print("\n{:<10} {:<25} {:>15} {:<10}".format(
+        "Ma HD", "Ten Dai Ly", "Gia Tri", "Trang Thai"
+    ))
+    print("-" * 65)
 
     for order in orders:
-        print(
-            f"{order['id']:<8} | "
-            f"{order['name']:<20} | "
-            f"{order['price']:<15,} | "
-            f"{order['status']}"
-        )
+        print("{:<10} {:<25} {:>15,} {:<10}".format(
+            order["id"],
+            order["name"],
+            order["price"],
+            order["status"]
+        ))
 
-    print("-" * 70)
+
+def input_non_empty(message):
+    while True:
+        value = input(message).strip()
+        if value:
+            return value
+        print("Du lieu khong duoc de trong!")
+
+
+def input_positive_price():
+    while True:
+        try:
+            price = int(input("Nhap gia tri don hang: "))
+            if price > 0:
+                return price
+            print("Gia tri phai lon hon 0!")
+        except ValueError:
+            print("Vui long nhap so nguyen hop le!")
 
 
 def add_order(orders):
-    print("\n--- TẠO MỚI ĐƠN HÀNG ---")
+    print("\n=== TAO MOI DON HANG ===")
 
-    while True:
-        order_id = input("Nhập mã đơn hàng: ").strip()
+    order_id = input_non_empty("Nhap ma don hang: ")
 
-        if order_id == "":
-            print("Mã đơn hàng không được để trống!")
-            continue
-
-        duplicate = False
-
-        for order in orders:
-            if order["id"] == order_id:
-                duplicate = True
-                break
-
-        if duplicate:
-            print("ERR-01: Mã đơn hàng đã tồn tại!")
+    for order in orders:
+        if order["id"].lower() == order_id.lower():
+            print("ERR-01: Ma don hang da ton tai!")
             return
 
-        break
-
-    while True:
-        agency_name = input("Nhập tên đại lý: ").strip()
-
-        if agency_name == "":
-            print("Tên đại lý không được để trống!")
-        else:
-            break
-
-    while True:
-        try:
-            price = int(input("Nhập giá trị đơn hàng: "))
-
-            if price <= 0:
-                print("Giá trị đơn hàng phải lớn hơn 0!")
-                continue
-
-            break
-
-        except ValueError:
-            print("Vui lòng nhập số nguyên!")
+    agency_name = input_non_empty("Nhap ten dai ly: ")
+    price = input_positive_price()
 
     new_order = {
         "id": order_id,
@@ -71,12 +57,61 @@ def add_order(orders):
     }
 
     orders.append(new_order)
+    print("Them moi don hang thanh cong!")
 
-    print("Tạo đơn hàng thành công!")
+
+def update_payment_status(orders):
+    print("\n=== CAP NHAT THANH TOAN ===")
+
+    order_id = input_non_empty("Nhap ma don hang: ")
+
+    for order in orders:
+        if order["id"].lower() == order_id.lower():
+
+            if order["status"] == "Paid":
+                print("ERR-04: Don hang da duoc thanh toan truoc do!")
+                return
+
+            order["status"] = "Paid"
+            print("Cap nhat trang thai thanh toan thanh cong!")
+            return
+
+    print("ERR-03: Khong tim thay ma don hang!")
+
+
+def calculate_revenue(orders):
+    total_revenue = 0
+
+    for order in orders:
+        if order["status"] == "Paid":
+            total_revenue += order["price"]
+
+    discount_percent = 5 if total_revenue >= 100_000_000 else 0
+    discount_amount = total_revenue * discount_percent / 100
+
+    return total_revenue, discount_percent, discount_amount
+
+
+def show_revenue_report(orders):
+    revenue, discount_percent, discount_amount = calculate_revenue(orders)
+
+    print("\n=== BAO CAO DOANH THU ===")
+    print(f"Tong doanh thu thuc te: {revenue:,.0f} VND")
+    print(f"Ty le chiet khau: {discount_percent}%")
+    print(f"Tien chiet khau: {discount_amount:,.0f} VND")
+
+
+def show_menu():
+    print("\n========== QUAN LY DON HANG ==========")
+    print("1. Xem danh sach don hang")
+    print("2. Tao moi don hang")
+    print("3. Cap nhat trang thai thanh toan")
+    print("4. Tinh tong doanh thu & chiet khau")
+    print("5. Thoat")
+    print("======================================")
 
 
 def main():
-
     orders = [
         {
             "id": "HD01",
@@ -93,41 +128,29 @@ def main():
     ]
 
     while True:
-
-        print("\n" + "=" * 40)
-        print("QUẢN LÝ ĐƠN HÀNG - AGENT ORDER")
-        print("=" * 40)
-        print("1. Xem danh sách đơn hàng hiện có")
-        print("2. Tạo mới đơn hàng đại lý")
-        print("3. Cập nhật trạng thái thanh toán")
-        print("4. Tính tổng doanh thu & chiết khấu")
-        print("5. Thoát chương trình")
+        show_menu()
 
         try:
-            user_choice = int(input("Mời chọn chức năng (1-5): "))
+            choice = int(input("Nhap lua chon: "))
         except ValueError:
-            print("Vui lòng nhập số từ 1 đến 5!")
+            print("Vui long nhap so tu 1 den 5!")
             continue
 
-        if user_choice == 1:
-            show_orders(orders)
+        if choice == 1:
+            display_orders(orders)
 
-        elif user_choice == 2:
+        elif choice == 2:
             add_order(orders)
 
-        elif user_choice == 3:
-            print("Chức năng 3 đang phát triển")
+        elif choice == 3:
+            update_payment_status(orders)
 
-        elif user_choice == 4:
-            print("Chức năng 4 đang phát triển")
+        elif choice == 4:
+            show_revenue_report(orders)
 
-        elif user_choice == 5:
-            print("Đang thoát chương trình...")
-            print("Cảm ơn bạn đã sử dụng hệ thống!")
+        elif choice == 5:
+            print("Cam on ban da su dung chuong trinh!")
             break
 
         else:
-            print("Lựa chọn không hợp lệ!")
-
-
-main()
+            print("Lua chon khong hop le!")
