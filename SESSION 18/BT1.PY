@@ -1,4 +1,4 @@
-    def display_orders(orders):
+def display_orders(orders):
     if not orders:
         print("\nERR-02: Danh sách đơn hàng trống!")
         return
