@@ -1,0 +1,4 @@
+2026-06-16 21:22:08,530 - INFO - Deposit successful: +100000 VND. Current Balance: 100000
+2026-06-16 21:22:17,509 - INFO - Transfer successful: -11111 VND to 3123123123. Current Balance: 88889
+2026-06-16 21:22:19,833 - INFO - Balance checked. Current Balance: 88889
+2026-06-16 21:22:22,442 - INFO - System shutdown
