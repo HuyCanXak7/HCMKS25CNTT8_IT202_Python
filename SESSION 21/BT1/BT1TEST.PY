@@ -1,15 +1,10 @@
-"""
-Unit test for Wallet class.
-"""
-
 import unittest
 
-from wallet import (
+from bt1 import (
     Wallet,
     InvalidAmountError,
     InsufficientBalanceError
 )
-
 
 class TestWallet(unittest.TestCase):
     """Test cases for Wallet."""
