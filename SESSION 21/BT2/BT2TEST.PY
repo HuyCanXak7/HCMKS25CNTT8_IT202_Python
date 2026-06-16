@@ -4,7 +4,7 @@ Unit test for Highlands POS.
 
 import unittest
 
-from highlands import (
+from bt2 import (
     calculate_total,
     add_to_order,
     InvalidQuantityError
